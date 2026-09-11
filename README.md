@@ -20,23 +20,14 @@ La cámara solo funciona en "contextos seguros": `http://localhost` está permit
 
 ## Cómo publicarlo en GitHub Pages
 
-1. Crea un repositorio nuevo en GitHub (público, para poder usar Pages gratis).
-2. Sube el contenido de esta carpeta (`index.html`, `style.css`, `js/`) a la raíz del repositorio:
+Este repositorio ya incluye el workflow `.github/workflows/deploy-pages.yml`, por lo que cada push a `main` publica automáticamente el sitio mediante GitHub Actions. No hay compilación ni servidor backend: el contenido estático se sube tal cual.
 
-   ```bash
-   cd robot-ar-game
-   git init
-   git add index.html style.css js README.md
-   git commit -m "Robot AR: juego de realidad aumentada con cámara"
-   git branch -M main
-   git remote add origin https://github.com/TU-USUARIO/TU-REPOSITORIO.git
-   git push -u origin main
-   ```
+1. Sube este repositorio a GitHub y asegúrate de que la rama `main` contenga el proyecto.
+2. En GitHub, entra a **Settings → Pages** y selecciona **Source: GitHub Actions** (la primera ejecución del workflow también puede dejar configurado Pages).
+3. Espera a que termine la acción **Deploy to GitHub Pages** en la pestaña **Actions**.
+4. Abre `https://TU-USUARIO.github.io/TU-REPOSITORIO/` **desde el celular** (Chrome en Android o Safari en iPhone) y acepta el permiso de cámara.
 
-3. En GitHub, entra al repositorio → **Settings** → **Pages**.
-4. En "Build and deployment", selecciona **Source: Deploy from a branch**, elige la rama **main** y la carpeta **/(root)**. Guarda.
-5. Espera 1–2 minutos. GitHub te dará una URL como `https://TU-USUARIO.github.io/TU-REPOSITORIO/`.
-6. Abre esa URL **desde el celular** (Chrome en Android o Safari en iPhone) y acepta el permiso de cámara.
+Para probar un despliegue sin hacer push, usa **Actions → Deploy to GitHub Pages → Run workflow**. Los paths del sitio son relativos, así que también funciona cuando GitHub Pages lo sirve bajo el nombre del repositorio. `.nojekyll` evita que Jekyll altere los módulos JavaScript.
 
 No necesitas ninguna acción adicional: los modelos de IA se descargan automáticamente desde la CDN pública de MediaPipe (`jsdelivr.net` y `storage.googleapis.com`) la primera vez que alguien abre el juego; el navegador los cachea para las siguientes visitas.
 
