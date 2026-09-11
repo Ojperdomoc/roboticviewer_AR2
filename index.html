@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+<meta name="theme-color" content="#05070d" />
+<title>ROBOT AR · Desactiva los núcleos</title>
+<meta name="description" content="Juego de realidad aumentada en el navegador: convierte tu cuerpo en un robot con la cámara del celular y desactiva núcleos de energía con tus manos." />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%2305070d'/%3E%3Ccircle cx='50' cy='50' r='30' fill='none' stroke='%2338f0ff' stroke-width='8'/%3E%3Ccircle cx='50' cy='50' r='10' fill='%2338f0ff'/%3E%3C/svg%3E" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- Video oculto: fuente cruda de la cámara -->
+  <video id="camera-video" playsinline autoplay muted></video>
+
+  <!-- Canvas visible: aquí se dibuja el efecto robótico + el juego -->
+  <canvas id="scene-canvas"></canvas>
+
+  <!-- Capa de partículas/orbes del juego (dibujada sobre el mismo canvas, ver js/game.js) -->
+
+  <!-- ======================= HUD (durante el juego) ======================= -->
+  <div id="hud" class="hud hidden">
+    <div class="hud-top">
+      <div class="hud-chip">
+        <span class="hud-label">SCORE</span>
+        <span class="hud-value" id="hud-score">0</span>
+      </div>
+      <div class="hud-chip">
+        <span class="hud-label">NIVEL</span>
+        <span class="hud-value" id="hud-level">1</span>
+      </div>
+      <div class="hud-chip hud-lives">
+        <span class="hud-label">VIDAS</span>
+        <span class="hud-value" id="hud-lives">❤❤❤</span>
+      </div>
+    </div>
+    <div class="hud-bottom">
+      <button id="btn-switch-camera" class="icon-btn" title="Cambiar cámara" aria-label="Cambiar cámara">⟲ CAM</button>
+      <div class="tracking-status" id="tracking-status">
+        <span class="dot dot-pose"></span>CUERPO
+        <span class="dot dot-hand"></span>MANOS
+        <span class="dot dot-face"></span>ROSTRO
+      </div>
+      <button id="btn-pause" class="icon-btn" title="Pausar" aria-label="Pausar">❚❚</button>
+    </div>
+  </div>
+
+  <!-- ======================= Pantalla de inicio ======================= -->
+  <div id="screen-start" class="screen">
+    <div class="panel">
+      <h1 class="title">ROBOT<span class="title-accent">AR</span></h1>
+      <p class="subtitle">Conviértete en una máquina. Desactiva los núcleos de energía con tus manos antes de que exploten.</p>
+
+      <div class="setting-row">
+        <label for="select-camera-facing">Cámara</label>
+        <select id="select-camera-facing">
+          <option value="user">Frontal (selfie)</option>
+          <option value="environment">Trasera</option>
+        </select>
+      </div>
+
+      <div class="setting-row">
+        <label for="select-quality">Rendimiento</label>
+        <select id="select-quality">
+          <option value="high">Alto (todo el tracking)</option>
+          <option value="medium" selected>Medio (recomendado)</option>
+          <option value="low">Bajo (celulares antiguos)</option>
+        </select>
+      </div>
+
+      <button id="btn-start" class="btn-primary">ACTIVAR CÁMARA Y JUGAR</button>
+
+      <p class="best-score">Mejor puntaje: <strong id="best-score-value">0</strong></p>
+      <p class="hint">Necesitas dar permiso de cámara. Todo el procesamiento ocurre en tu celular: ninguna imagen se envía a ningún servidor.</p>
+    </div>
+  </div>
+
+  <!-- ======================= Pantalla de carga ======================= -->
+  <div id="screen-loading" class="screen hidden">
+    <div class="panel panel-center">
+      <div class="spinner"></div>
+      <p id="loading-text">Cargando módulos de visión…</p>
+    </div>
+  </div>
+
+  <!-- ======================= Pantalla de error ======================= -->
+  <div id="screen-error" class="screen hidden">
+    <div class="panel">
+      <h2 class="title-small">No se pudo activar la cámara</h2>
+      <p id="error-message" class="error-message">—</p>
+      <ul class="error-tips">
+        <li>El sitio debe abrirse por <strong>HTTPS</strong> (GitHub Pages ya lo hace).</li>
+        <li>Revisa los permisos de cámara del navegador para este sitio.</li>
+        <li>En iPhone, usa Safari; en Android, usa Chrome actualizado.</li>
+        <li>Si otra app está usando la cámara, ciérrala e inténtalo de nuevo.</li>
+      </ul>
+      <button id="btn-retry" class="btn-primary">REINTENTAR</button>
+    </div>
+  </div>
+
+  <!-- ======================= Pantalla de fin de juego ======================= -->
+  <div id="screen-gameover" class="screen hidden">
+    <div class="panel">
+      <h2 class="title-small">SISTEMA DESACTIVADO</h2>
+      <p class="gameover-score">Puntaje: <strong id="gameover-score">0</strong></p>
+      <p class="gameover-best" id="gameover-best">Mejor puntaje: 0</p>
+      <button id="btn-restart" class="btn-primary">JUGAR DE NUEVO</button>
+      <button id="btn-menu" class="btn-secondary">MENÚ PRINCIPAL</button>
+    </div>
+  </div>
+
+  <!-- Aviso de pausa -->
+  <div id="screen-pause" class="screen hidden">
+    <div class="panel">
+      <h2 class="title-small">PAUSA</h2>
+      <button id="btn-resume" class="btn-primary">CONTINUAR</button>
+      <button id="btn-pause-menu" class="btn-secondary">SALIR AL MENÚ</button>
+    </div>
+  </div>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
